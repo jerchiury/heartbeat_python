@@ -1,6 +1,6 @@
 # Heartbeat prediction with Python (Keras)
 
-I set out to predict 6 most frequent types of heartbeats given ECG graphs using neural network. The training data are annotated by cardiologists. The final accuracy of the deep learning model is around 96.8%. Data comes from the [MIT-BIH Arrhythmia Database](https://www.physionet.org/content/mitdb/1.0.0/). Special python package wfdb was used to read the ecg samples and annotations. 
+I set out to predict 6 most frequent types of heartbeats given ECG graphs using neural network. The training data are annotated by cardiologists. The final accuracy of the deep learning model is around 97.4%. Data comes from the [MIT-BIH Arrhythmia Database](https://www.physionet.org/content/mitdb/1.0.0/). Special python package wfdb was used to read the ecg samples and annotations. 
 
 ``` python
 import os
@@ -90,6 +90,7 @@ simple_plot(test[1])
 
 ``` python
 record_list=wfdb.get_record_list('mitdb')
+record_list=[n for n in record_list if n not in ('102','104','114')] #remove the ecg's that is not from MLII
 
 heart_beats=[]
 beat_type=[]
@@ -117,29 +118,29 @@ beat_type_count=pd.DataFrame({'freq':beat_type_count, 'prop':beat_type_count/sum
 ```
 
                                                  freq       prop
-    Normal beat                                 74110  67.171214
-    Left bundle branch block beat                8046   7.292667
-    Paced beat                                   7020   6.362730
-    Right bundle branch block beat               6846   6.205021
-    Premature ventricular contraction            6734   6.103508
-    Atrial premature contraction                 2256   2.044775
-    Rhythm change                                1241   1.124807
-    Fusion of paced and normal beat               982   0.890057
-    Fusion of ventricular and normal beat         799   0.724191
-    Signal quality change                         605   0.548355
-    Ventricular flutter wave                      472   0.427807
-    Comment annotation                            434   0.393365
-    Nodal (junctional) escape beat                215   0.194870
-    Isolated QRS-like artifact                    132   0.119641
-    Aberrated atrial premature beat               107   0.096982
-    Ventricular escape beat                        97   0.087918
-    Non-conducted P-wave (blocked APB)             90   0.081573
-    Nodal (junctional) premature beat              82   0.074322
-    Unclassifiable beat                            32   0.029004
-    Atrial escape beat                             16   0.014502
-    Start of ventricular flutter/fibrillation       6   0.005438
-    End of ventricular flutter/fibrillation         6   0.005438
-    Premature or ectopic supraventricular beat      2   0.001813
+    Normal beat                                 72058  69.285206
+    Left bundle branch block beat                8046   7.736390
+    Right bundle branch block beat               6846   6.582566
+    Premature ventricular contraction            6712   6.453722
+    Paced beat                                   3616   3.476856
+    Atrial premature contraction                 2246   2.159574
+    Rhythm change                                1191   1.145170
+    Fusion of ventricular and normal beat         795   0.764408
+    Signal quality change                         561   0.539413
+    Ventricular flutter wave                      472   0.453837
+    Comment annotation                            434   0.417300
+    Fusion of paced and normal beat               260   0.249995
+    Nodal (junctional) escape beat                215   0.206727
+    Isolated QRS-like artifact                    131   0.125959
+    Aberrated atrial premature beat               107   0.102883
+    Ventricular escape beat                        97   0.093267
+    Non-conducted P-wave (blocked APB)             90   0.086537
+    Nodal (junctional) premature beat              81   0.077883
+    Atrial escape beat                             16   0.015384
+    Unclassifiable beat                            14   0.013461
+    End of ventricular flutter/fibrillation         6   0.005769
+    Start of ventricular flutter/fibrillation       6   0.005769
+    Premature or ectopic supraventricular beat      2   0.001923
 
 ![](sample_beat.png)
 
@@ -225,16 +226,16 @@ def total_acc(cm):
 
 # validation on val sets
 
-``` pyhton
+``` python
 pred1=model.predict(xval1).argmax(axis=1)
 cm1=confusion_matrix(yval1, pred1)
 cm1=pd.DataFrame(cm1, index = beat_label, columns = beat_label)
 sn.heatmap(cm1, annot=True)
 plt.yticks(rotation=0)
-plt.title('Confusion matrix of validation set 1. Total acc = 96.8%')
+plt.title('Confusion matrix of validation set 1. Total acc = 97.4%')
 plt.tight_layout()
 plt.savefig('cm_val1.png', format='png', dpi=300)
-total_acc(cm1) #96.8%!
+total_acc(cm1) #97.4%!
 ```
 
 ![](cm_val1.png)
@@ -245,10 +246,10 @@ cm2=confusion_matrix(yval2, pred2)
 cm2=pd.DataFrame(cm2, index = beat_label, columns = beat_label)
 sn.heatmap(cm2, annot=True)
 plt.yticks(rotation=0)
-plt.title('Confusion matrix of validation set 2. Total acc = 96.9%')
+plt.title('Confusion matrix of validation set 2. Total acc = 97.3%')
 plt.tight_layout()
 plt.savefig('cm_val2.png', format='png', dpi=300)
-total_acc(cm2) #96.9%!
+total_acc(cm2) #97.3%!
 
 model.save('heart_beat_model.h5')
 ```

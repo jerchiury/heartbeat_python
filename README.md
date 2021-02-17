@@ -2,7 +2,7 @@
 
 For the complete report please refer to [here](https://github.com/jerchiury/heartbeat_python/blob/master/heartbeat_python.md)
 
-I set out to predict 6 most frequent types of heartbeats given ECG graphs using neural network. The training data are annotated by cardiologists. The final accuracy of the deep learning model is around 96.8%. Data comes from the [MIT-BIH Arrhythmia Database](https://www.physionet.org/content/mitdb/1.0.0/).
+I set out to predict 6 most frequent types of heartbeats given ECG graphs using neural network. The training data are annotated by cardiologists. The final accuracy of the deep learning model is around 97.4%. Data comes from the [MIT-BIH Arrhythmia Database](https://www.physionet.org/content/mitdb/1.0.0/).
 
 
 ## A ver short window of the ECG graphs we are dealing with with added annotation markers

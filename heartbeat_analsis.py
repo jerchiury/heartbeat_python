@@ -29,7 +29,9 @@ annotation=pd.DataFrame({'sample_num':annotation.sample, 'desc':annotation.descr
 
 # visualizing
 simple_plot(sample[0:1800,])
-plt.scatter(annotation.sample_num[0:6], [1]*6)
+plt.scatter(annotation.sample_num[0:7], [1]*7)
+plt.savefig('ecg_ann_plot.png', format='png', dpi=300)
+
 
 # identifying the point to cut
 beat_length=540 # set each beat data to 1.5 second long, 1.5 seconds per beat is 40 bpm
@@ -74,6 +76,7 @@ for i in (1, 10, 429, 653, 1546):
 simple_plot(test[1])
 #%% ok now we've done one case, it's time to extract all cases
 record_list=wfdb.get_record_list('mitdb')
+record_list=[n for n in record_list if n not in ('102','104','114')] #remove the ecg's that is not from MLII
 
 heart_beats=[]
 beat_type=[]
@@ -96,8 +99,11 @@ heart_beats=pd.DataFrame({'ecg':heart_beats, 'beat_type':beat_type})
 
 beat_type_count=pd.Series(beat_type).value_counts()
 beat_type_count=pd.DataFrame({'freq':beat_type_count, 'prop':beat_type_count/sum(beat_type_count)*100})
+beat_type_count
 
-simple_plot(heart_beats.ecg[45177])
+simple_plot(heart_beats.ecg[1])
+plt.savefig('sample_beat.png', format='png', dpi=300)
+
 
 #%%
 # we are gonna do deep learning on the top 6 types of beats.
@@ -182,20 +188,20 @@ cm1=confusion_matrix(yval1, pred1)
 cm1=pd.DataFrame(cm1, index = beat_label, columns = beat_label)
 sn.heatmap(cm1, annot=True)
 plt.yticks(rotation=0)
-plt.title('Confusion matrix of validation set 1. Total acc = 96.8%')
+plt.title('Confusion matrix of validation set 1. Total acc = 97.4%')
 plt.tight_layout()
 plt.savefig('cm_val1.png', format='png', dpi=300)
-total_acc(cm1) #96.8%!
+total_acc(cm1) #97.4%!
 
 pred2=model.predict(xval2).argmax(axis=1)
 cm2=confusion_matrix(yval2, pred2)
 cm2=pd.DataFrame(cm2, index = beat_label, columns = beat_label)
 sn.heatmap(cm2, annot=True)
 plt.yticks(rotation=0)
-plt.title('Confusion matrix of validation set 2. Total acc = 96.9%')
+plt.title('Confusion matrix of validation set 2. Total acc = 97.3%')
 plt.tight_layout()
 plt.savefig('cm_val2.png', format='png', dpi=300)
-total_acc(cm2) #96.9%!
+total_acc(cm2) #97.3%!
 
 model.save('heart_beat_model.h5')
 
@@ -218,7 +224,7 @@ def line_heatmap(x, title):
     temp['variable']=temp['variable']//5*5
     temp['value']=temp['value']//0.01*0.01
     temp=pd.crosstab(temp.value, temp.variable)
-    temp=temp**(0.2)
+    temp=temp**(0.25)
     temp.sort_values(by=['value'], inplace=True, ascending=False)
     sn.heatmap(temp, cmap=sn.cm.rocket_r, xticklabels=False, yticklabels=False, cbar=False)
     plt.xlabel("") 
